@@ -1,0 +1,80 @@
+---
+title: "Assignment B-1"
+author: "Charlotte Edgar"
+date: "2023-10-24"
+output: html_document
+Roxygen: list(markdown = TRUE)
+---
+
+In this assignment we will make a function to find the mean and standard deviation of multiple columns of a dataset at once and print them in a table. This function can be used in an exploratory data analysis and can save time looking at all numeric columns of a dataset at once, instead of individually.
+```{r}
+#' @title Mean of columns
+#' @details This function takes the mean of each numeric column in your dataset.
+#' @param your_data the dataset containing only numeric columns that you wish to find the mean those columns, named your_data since data is a function in the utils R package to find preexisting datasets
+#' @return returns a vector of means, the means are in the same order as the columns in the dataset
+
+mean_sd_of_cols <- function(your_data){
+   means <- c()
+   sds <- c()
+   your_data <- as.data.frame(your_data)
+  for(i in 1:ncol(your_data)){
+    if(!is.numeric(your_data[,i])) {
+    stop('I am so sorry, but this function only works for numeric input!\n',
+         'Your provided dataset has at least one column of class: ', class(your_data[,i])[1])
+  }
+    means[i] <- mean(your_data[,i])
+    sds[i] <- sd(your_data[,i])
+  }
+   result <- data.frame(cbind(means,sds))
+   colnames(result) <- c("Mean", "Std. Dev.")
+   rownames(result) <- paste0("Column", 1:ncol(your_data))
+   return(result)
+}
+
+
+```
+
+Examples to show how our new function works.
+
+We begin with a simple example where the input is a 3 x 3 matrix.
+```{r}
+dataset1 <- matrix(c(1,2,3,4,5,6,7,8,9),3,3)
+dataset1
+```
+We apply our function to this matrix.
+```{r}
+mean_sd_of_cols(dataset1)
+```
+
+The output is as expected where the means are in the first column and the standard deviations are in the second column. Each row is a new column, hence we have 3 rows.
+
+The second example starts by creating a new dataset which is created with the first column being odd numbers starting at 1 and ending at 50. The second column is created using seq() from 25 to 50 and the third using seq() from 1 to 4. This gives us a variety of ranges in the columns. Each column is of length 50. Note that the input in this example is now a dataframe instead of a matrix.
+
+```{r}
+dataset2 <- data.frame(cbind( seq(1,100,by = 2), seq(25,50, length = 50), seq(1,4, length = 50)))
+head(dataset2)
+```
+
+We will use our newly created function to see the means and standard deviations of each column. 
+
+```{r}
+mean_sd_of_cols(dataset2)
+```
+
+The output of our second example is also as expected where the means are in the first column and the standard deviations are in the second column. Each row is a new column, hence we have 3 rows. 
+
+The third example will demonstrate what happens if a dataset including a non-numeric column is inputted as the argument into our new function. The simple dataset is made with 2 columns wheret the first column is numeric using seq() from 1 to 10 and the second is a vector of characters. 
+```{r}
+dataset3 <- data.frame(cbind(seq(1,10,length = 26), paste0(letters)))
+head(dataset3)
+```
+We apply our function to this dataset.
+```{r, error = TRUE}
+mean_sd_of_cols(dataset3)
+```
+We get an error as expected because the input has to have all numeric columns. The error message explains this. This would encourage the user to subset their data so that only numeric columns are inputted as an argument to the new function. 
+
+
+
+
+
