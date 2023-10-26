@@ -5,6 +5,9 @@ date: "2023-10-24"
 output: html_document
 Roxygen: list(markdown = TRUE)
 ---
+```{r}
+library(testthat)
+```
 
 In this assignment we will make a function to find the mean and standard deviation of multiple columns of a dataset at once and print them in a table. This function can be used in an exploratory data analysis and can save time looking at all numeric columns of a dataset at once, instead of individually.
 ```{r}
@@ -17,12 +20,13 @@ mean_sd_of_cols <- function(your_data){
    means <- c()
    sds <- c()
    your_data <- as.data.frame(your_data)
+   
   for(i in 1:ncol(your_data)){
     if(!is.numeric(your_data[,i])) {
     stop('I am so sorry, but this function only works for numeric input!\n',
          'Your provided dataset has at least one column of class: ', class(your_data[,i])[1])
   }
-    means[i] <- mean(your_data[,i])
+    means[i] <- mean(your_data[,i], na.rm= TRUE)
     sds[i] <- sd(your_data[,i])
   }
    result <- data.frame(cbind(means,sds))
@@ -75,6 +79,44 @@ mean_sd_of_cols(dataset3)
 We get an error as expected because the input has to have all numeric columns. The error message explains this. This would encourage the user to subset their data so that only numeric columns are inputted as an argument to the new function. 
 
 
+
+```{r}
+test_that("Testing numeric examples", {
+  expect_equal(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))$Mean, c(1,5) )
+  expect_equal(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))$"Std. Dev.", c(0,0) )
+})
+
+test_that("Testing numer of columns and rows printed",{
+  expect_equal(ncol(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))), 2 )
+  expect_equal(nrow(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))), ncol(cbind(rep(1,10), rep(5,10))) )
+})
+
+test_that("Testing numer of columns and rows printed",{
+  expect_equal(ncol(mean_sd_of_cols(matrix(rnorm(100), 25, 4))), 2 )
+  expect_equal(nrow(mean_sd_of_cols(matrix(rnorm(100), 25, 4))), 4)
+})
+
+test_that("Testing a dataset with a cateogrical variable",{
+  expect_error(mean_sd_of_cols(cbind("red","blue","yellow")), "I am so sorry, but this function only works for numeric input!\nYour provided dataset has at least one column of class: character")
+})
+
+
+data_w_1_NAs <- cbind(rep(1,10), rep(5,10))
+data_w_1_NAs[2,2] <- NA
+
+test_that("Testing a dataset with NA's",{
+  expect_equal(mean_sd_of_cols(data_w_1_NAs)$Mean, c(1,5) )
+})
+
+
+data_w_all_NAs <- cbind(rep(NA, 10), rep(5,10))
+
+test_that("Testing a dataset with all NA's",{
+  expect_equal(mean_sd_of_cols(data_w_all_NAs)$"Std. Dev.", c(NA,0) )
+})
+
+
+```
 
 
 
