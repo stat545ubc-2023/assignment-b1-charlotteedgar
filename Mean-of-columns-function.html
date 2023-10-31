@@ -436,7 +436,7 @@ are in the first column and the standard deviations are in the second
 column. Each row is a new column, hence we have 3 rows.</p>
 <p>The third example will demonstrate what happens if a dataset
 including a non-numeric column is inputted as the argument into our new
-function. The simple dataset is made with 2 columns wheret the first
+function. The simple dataset is made with 2 columns where the first
 column is numeric using seq() from 1 to 10 and the second is a vector of
 characters.</p>
 <pre class="r"><code>dataset3 &lt;- data.frame(cbind(seq(1,10,length = 26), paste0(letters)))
@@ -460,34 +460,34 @@ argument to the new function.</p>
   expect_equal(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))$Mean, c(1,5) )
   expect_equal(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))$&quot;Std. Dev.&quot;, c(0,0) )
 })</code></pre>
-<pre><code>## Test passed 🌈</code></pre>
+<pre><code>## Test passed 🎉</code></pre>
 <pre class="r"><code>test_that(&quot;Testing numer of columns and rows printed&quot;,{
   expect_equal(ncol(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))), 2 )
   expect_equal(nrow(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))), ncol(cbind(rep(1,10), rep(5,10))) )
 })</code></pre>
-<pre><code>## Test passed 🥇</code></pre>
+<pre><code>## Test passed 😀</code></pre>
 <pre class="r"><code>test_that(&quot;Testing numer of columns and rows printed&quot;,{
   expect_equal(ncol(mean_sd_of_cols(matrix(rnorm(100), 25, 4))), 2 )
   expect_equal(nrow(mean_sd_of_cols(matrix(rnorm(100), 25, 4))), 4)
 })</code></pre>
-<pre><code>## Test passed 😸</code></pre>
+<pre><code>## Test passed 🎊</code></pre>
 <pre class="r"><code>test_that(&quot;Testing a dataset with a cateogrical variable&quot;,{
   expect_error(mean_sd_of_cols(cbind(&quot;red&quot;,&quot;blue&quot;,&quot;yellow&quot;)), &quot;I am so sorry, but this function only works for numeric input!\nYour provided dataset has at least one column of class: character&quot;)
 })</code></pre>
-<pre><code>## Test passed 🥇</code></pre>
+<pre><code>## Test passed 🎊</code></pre>
 <pre class="r"><code>data_w_1_NAs &lt;- cbind(rep(1,10), rep(5,10))
 data_w_1_NAs[2,2] &lt;- NA
 
 test_that(&quot;Testing a dataset with NA&#39;s&quot;,{
   expect_equal(mean_sd_of_cols(data_w_1_NAs)$Mean, c(1,5) )
 })</code></pre>
-<pre><code>## Test passed 🌈</code></pre>
+<pre><code>## Test passed 🎊</code></pre>
 <pre class="r"><code>data_w_all_NAs &lt;- cbind(rep(NA, 10), rep(5,10))
 
 test_that(&quot;Testing a dataset with all NA&#39;s&quot;,{
   expect_equal(mean_sd_of_cols(data_w_all_NAs)$&quot;Std. Dev.&quot;, c(NA,0) )
 })</code></pre>
-<pre><code>## Test passed 🎊</code></pre>
+<pre><code>## Test passed 🎉</code></pre>
 
 
 
