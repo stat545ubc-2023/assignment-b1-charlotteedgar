@@ -2,7 +2,7 @@
 title: "Assignment B-1"
 author: "Charlotte Edgar"
 date: "2023-10-24"
-output: html_document
+output: pdf_document
 Roxygen: list(markdown = TRUE)
 ---
 ```{r}
