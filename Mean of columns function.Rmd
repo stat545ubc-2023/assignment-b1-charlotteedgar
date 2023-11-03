@@ -12,9 +12,9 @@ library(testthat)
 In this assignment we will make a function to find the mean and standard deviation of multiple columns of a dataset at once and print them in a table. This function can be used in an exploratory data analysis and can save time by looking at all numeric columns of a dataset at once instead of individually.
 ```{r}
 #' @title Mean of columns
-#' @details This function takes the mean of each numeric column in your dataset.
-#' @param your_data the dataset containing only numeric columns that you wish to find the mean those columns, named your_data since data is a function in the utils R package to find preexisting datasets
-#' @return returns a vector of means, the means are in the same order as the columns in the dataset
+#' @details This function takes the mean and standard deviation of each numeric column in a dataset
+#' @param your_data the dataset containing only numeric columns, named your_data since data is a function in the utils R package to find preexisting datasets
+#' @return returns a data frame with one column for the column means and one for the column standard deviations
 
 mean_sd_of_cols <- function(your_data){
    means <- c()
@@ -27,7 +27,7 @@ mean_sd_of_cols <- function(your_data){
          'Your provided dataset has at least one column of class: ', class(your_data[,i])[1])
   }
     means[i] <- mean(your_data[,i], na.rm= TRUE)
-    sds[i] <- sd(your_data[,i])
+    sds[i] <- sd(your_data[,i],na.rm=TRUE)
   }
    result <- data.frame(cbind(means,sds))
    colnames(result) <- c("Mean", "Std. Dev.")
@@ -38,6 +38,7 @@ mean_sd_of_cols <- function(your_data){
 
 ```
 
+## Examples
 Examples to show how our new function works.
 
 We begin with a simple example where the input is a 3 x 3 matrix.
@@ -52,7 +53,7 @@ mean_sd_of_cols(dataset1)
 
 The output is as expected where the means are in the first column and the standard deviations are in the second column. Each row is a column from the dataset, hence we have 3 rows.
 
-The second example starts by creating a new dataset which is created with the first column being odd numbers starting at 1 and ending at 50. The second column is created using seq() from 25 to 50 and the third using seq() from 1 to 4. This gives us a variety of ranges in the columns. Each column is of length 50. Note that the input in this example is now a dataframe instead of a matrix.
+The second example starts by creating a new dataset with the first column being odd numbers starting at 1 and ending at 99. The second column is created using seq() from 25 to 50 and the third using seq() from 1 to 4. All columns have length 50. This gives us a variety of ranges in the columns. Note that the input in this example is now a data frame instead of a matrix to show the different inputs that our function can handle.
 
 ```{r}
 dataset2 <- data.frame(cbind( seq(1,100,by = 2), seq(25,50, length = 50), seq(1,4, length = 50)))
@@ -67,10 +68,9 @@ mean_sd_of_cols(dataset2)
 
 The output of our second example is also as expected where the means are in the first column and the standard deviations are in the second column. Each row is a new column of the dataset, hence we have 3 rows. 
 
-The third example will demonstrate what happens if a dataset including a non-numeric column is inputted as the argument into our new function. The simple dataset is made with 2 columns where the first column is numeric using seq() from 1 to 10 and the second is a vector of characters. 
+The third example will demonstrate what happens if a dataset including a non-numeric column is inputted as the argument into our new function. This simple dataset is made with 2 columns where the first column is numeric using seq() from 1 to 10 and the second is a vector of characters. 
 ```{r}
-col1 <- seq(1,10,length = 26)
-dataset3 <- cbind(seq(1,10,length = 26), paste0(letters))
+dataset3 <- data.frame(numbers = seq(1,10,length = 26), letters = paste0(letters))
 head(dataset3)
 
 ```
@@ -80,7 +80,7 @@ mean_sd_of_cols(dataset3)
 ```
 We get an error as expected because the input has to have all numeric columns. The error message explains this. This would encourage the user to subset their dataset so that only numeric columns are inputted as an argument to the new function. 
 
-
+## Testing the function
 
 ```{r}
 test_that("Testing numeric examples", {
@@ -88,12 +88,12 @@ test_that("Testing numeric examples", {
   expect_equal(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))$"Std. Dev.", c(0,0) )
 })
 
-test_that("Testing numer of columns and rows printed",{
+test_that("Testing number of columns and rows printed",{
   expect_equal(ncol(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))), 2 )
   expect_equal(nrow(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))), ncol(cbind(rep(1,10), rep(5,10))) )
 })
 
-test_that("Testing numer of columns and rows printed",{
+test_that("Testing number of columns and rows printed",{
   expect_equal(ncol(mean_sd_of_cols(matrix(rnorm(100), 25, 4))), 2 )
   expect_equal(nrow(mean_sd_of_cols(matrix(rnorm(100), 25, 4))), 4)
 })
@@ -101,7 +101,6 @@ test_that("Testing numer of columns and rows printed",{
 test_that("Testing a dataset with a cateogrical variable",{
   expect_error(mean_sd_of_cols(cbind("red","blue","yellow")), "I am so sorry, but this function only works for numeric input!\nYour provided dataset has at least one column of class: character")
 })
-
 
 data_w_1_NAs <- cbind(rep(1,10), rep(5,10))
 data_w_1_NAs[2,2] <- NA
@@ -113,11 +112,16 @@ test_that("Testing a dataset with NA's",{
 
 data_w_all_NAs <- cbind(rep(NA, 10), rep(5,10))
 
-test_that("Testing a dataset with all NA's",{
+test_that("Testing a dataset with all NA's (mean)",{
+  expect_equal(mean_sd_of_cols(data_w_all_NAs)$Mean, c(NA,5) )
+})
+
+test_that("Testing a dataset with all NA's (Std. Dev.)",{
   expect_equal(mean_sd_of_cols(data_w_all_NAs)$"Std. Dev.", c(NA,0) )
 })
 
 ```
+The tests all pass as expected. Notice that if we have an NA in one of our columns the function we made removes this value when calculating the mean and standard deviation. However, if the a column of all NA values is entered, then the mean and standard deviation for this column is also NA. However, no error is returned as the function still returns the mean and standard deviations of other numeric columns inputted. 
 
 
 

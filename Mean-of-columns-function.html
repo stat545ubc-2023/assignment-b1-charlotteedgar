@@ -299,23 +299,17 @@ overflow-y: auto;
 border: 1px solid #ddd;
 border-radius: 4px;
 }
-.tabset-dropdown > .nav-tabs > li.active:before {
-content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+content: "\e259";
 font-family: 'Glyphicons Halflings';
 display: inline-block;
 padding: 10px;
 border-right: 1px solid #ddd;
 }
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-content: "";
-border: none;
-}
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-content: "";
+content: "\e258";
 font-family: 'Glyphicons Halflings';
-display: inline-block;
-padding: 10px;
-border-right: 1px solid #ddd;
+border: none;
 }
 .tabset-dropdown > .nav-tabs > li.active {
 display: block;
@@ -367,12 +361,12 @@ display: none;
 <p>In this assignment we will make a function to find the mean and
 standard deviation of multiple columns of a dataset at once and print
 them in a table. This function can be used in an exploratory data
-analysis and can save time looking at all numeric columns of a dataset
-at once, instead of individually.</p>
+analysis and can save time by looking at all numeric columns of a
+dataset at once instead of individually.</p>
 <pre class="r"><code>#&#39; @title Mean of columns
-#&#39; @details This function takes the mean of each numeric column in your dataset.
-#&#39; @param your_data the dataset containing only numeric columns that you wish to find the mean those columns, named your_data since data is a function in the utils R package to find preexisting datasets
-#&#39; @return returns a vector of means, the means are in the same order as the columns in the dataset
+#&#39; @details This function takes the mean and standard deviation of each numeric column in a dataset
+#&#39; @param your_data the dataset containing only numeric columns, named your_data since data is a function in the utils R package to find preexisting datasets
+#&#39; @return returns a data frame with one column for the column means and one for the column standard deviations
 
 mean_sd_of_cols &lt;- function(your_data){
    means &lt;- c()
@@ -385,13 +379,15 @@ mean_sd_of_cols &lt;- function(your_data){
          &#39;Your provided dataset has at least one column of class: &#39;, class(your_data[,i])[1])
   }
     means[i] &lt;- mean(your_data[,i], na.rm= TRUE)
-    sds[i] &lt;- sd(your_data[,i])
+    sds[i] &lt;- sd(your_data[,i],na.rm=TRUE)
   }
    result &lt;- data.frame(cbind(means,sds))
    colnames(result) &lt;- c(&quot;Mean&quot;, &quot;Std. Dev.&quot;)
    rownames(result) &lt;- paste0(&quot;Column&quot;, 1:ncol(your_data))
    return(result)
 }</code></pre>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
 <p>Examples to show how our new function works.</p>
 <p>We begin with a simple example where the input is a 3 x 3 matrix.</p>
 <pre class="r"><code>dataset1 &lt;- matrix(c(1,2,3,4,5,6,7,8,9),3,3)
@@ -407,14 +403,15 @@ dataset1</code></pre>
 ## Column2    5         1
 ## Column3    8         1</code></pre>
 <p>The output is as expected where the means are in the first column and
-the standard deviations are in the second column. Each row is a new
-column, hence we have 3 rows.</p>
-<p>The second example starts by creating a new dataset which is created
-with the first column being odd numbers starting at 1 and ending at 50.
-The second column is created using seq() from 25 to 50 and the third
-using seq() from 1 to 4. This gives us a variety of ranges in the
-columns. Each column is of length 50. Note that the input in this
-example is now a dataframe instead of a matrix.</p>
+the standard deviations are in the second column. Each row is a column
+from the dataset, hence we have 3 rows.</p>
+<p>The second example starts by creating a new dataset with the first
+column being odd numbers starting at 1 and ending at 99. The second
+column is created using seq() from 25 to 50 and the third using seq()
+from 1 to 4. All columns have length 50. This gives us a variety of
+ranges in the columns. Note that the input in this example is now a data
+frame instead of a matrix to show the different inputs that our function
+can handle.</p>
 <pre class="r"><code>dataset2 &lt;- data.frame(cbind( seq(1,100,by = 2), seq(25,50, length = 50), seq(1,4, length = 50)))
 head(dataset2)</code></pre>
 <pre><code>##   X1       X2       X3
@@ -433,39 +430,43 @@ deviations of each column.</p>
 ## Column3  2.5  0.8924926</code></pre>
 <p>The output of our second example is also as expected where the means
 are in the first column and the standard deviations are in the second
-column. Each row is a new column, hence we have 3 rows.</p>
+column. Each row is a new column of the dataset, hence we have 3
+rows.</p>
 <p>The third example will demonstrate what happens if a dataset
 including a non-numeric column is inputted as the argument into our new
-function. The simple dataset is made with 2 columns where the first
+function. This simple dataset is made with 2 columns where the first
 column is numeric using seq() from 1 to 10 and the second is a vector of
 characters.</p>
-<pre class="r"><code>dataset3 &lt;- data.frame(cbind(seq(1,10,length = 26), paste0(letters)))
+<pre class="r"><code>dataset3 &lt;- data.frame(numbers = seq(1,10,length = 26), letters = paste0(letters))
 head(dataset3)</code></pre>
-<pre><code>##     X1 X2
-## 1    1  a
-## 2 1.36  b
-## 3 1.72  c
-## 4 2.08  d
-## 5 2.44  e
-## 6  2.8  f</code></pre>
+<pre><code>##   numbers letters
+## 1    1.00       a
+## 2    1.36       b
+## 3    1.72       c
+## 4    2.08       d
+## 5    2.44       e
+## 6    2.80       f</code></pre>
 <p>We apply our function to this dataset.</p>
 <pre class="r"><code>mean_sd_of_cols(dataset3)</code></pre>
 <pre><code>## Error in mean_sd_of_cols(dataset3): I am so sorry, but this function only works for numeric input!
 ## Your provided dataset has at least one column of class: character</code></pre>
 <p>We get an error as expected because the input has to have all numeric
 columns. The error message explains this. This would encourage the user
-to subset their data so that only numeric columns are inputted as an
+to subset their dataset so that only numeric columns are inputted as an
 argument to the new function.</p>
+</div>
+<div id="testing-the-function" class="section level2">
+<h2>Testing the function</h2>
 <pre class="r"><code>test_that(&quot;Testing numeric examples&quot;, {
   expect_equal(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))$Mean, c(1,5) )
   expect_equal(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))$&quot;Std. Dev.&quot;, c(0,0) )
 })</code></pre>
-<pre><code>## Test passed 🎉</code></pre>
+<pre><code>## Test passed 🥇</code></pre>
 <pre class="r"><code>test_that(&quot;Testing numer of columns and rows printed&quot;,{
   expect_equal(ncol(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))), 2 )
   expect_equal(nrow(mean_sd_of_cols(cbind(rep(1,10), rep(5,10)))), ncol(cbind(rep(1,10), rep(5,10))) )
 })</code></pre>
-<pre><code>## Test passed 😀</code></pre>
+<pre><code>## Test passed 😸</code></pre>
 <pre class="r"><code>test_that(&quot;Testing numer of columns and rows printed&quot;,{
   expect_equal(ncol(mean_sd_of_cols(matrix(rnorm(100), 25, 4))), 2 )
   expect_equal(nrow(mean_sd_of_cols(matrix(rnorm(100), 25, 4))), 4)
@@ -474,20 +475,31 @@ argument to the new function.</p>
 <pre class="r"><code>test_that(&quot;Testing a dataset with a cateogrical variable&quot;,{
   expect_error(mean_sd_of_cols(cbind(&quot;red&quot;,&quot;blue&quot;,&quot;yellow&quot;)), &quot;I am so sorry, but this function only works for numeric input!\nYour provided dataset has at least one column of class: character&quot;)
 })</code></pre>
-<pre><code>## Test passed 🎊</code></pre>
+<pre><code>## Test passed 🥇</code></pre>
 <pre class="r"><code>data_w_1_NAs &lt;- cbind(rep(1,10), rep(5,10))
 data_w_1_NAs[2,2] &lt;- NA
 
 test_that(&quot;Testing a dataset with NA&#39;s&quot;,{
   expect_equal(mean_sd_of_cols(data_w_1_NAs)$Mean, c(1,5) )
 })</code></pre>
-<pre><code>## Test passed 🎊</code></pre>
+<pre><code>## Test passed 🎉</code></pre>
 <pre class="r"><code>data_w_all_NAs &lt;- cbind(rep(NA, 10), rep(5,10))
 
-test_that(&quot;Testing a dataset with all NA&#39;s&quot;,{
+test_that(&quot;Testing a dataset with all NA&#39;s (mean)&quot;,{
+  expect_equal(mean_sd_of_cols(data_w_all_NAs)$Mean, c(NA,5) )
+})</code></pre>
+<pre><code>## Test passed 🥳</code></pre>
+<pre class="r"><code>test_that(&quot;Testing a dataset with all NA&#39;s (Std. Dev.)&quot;,{
   expect_equal(mean_sd_of_cols(data_w_all_NAs)$&quot;Std. Dev.&quot;, c(NA,0) )
 })</code></pre>
-<pre><code>## Test passed 🎉</code></pre>
+<pre><code>## Test passed 🎊</code></pre>
+<p>The tests all pass as expected. Notice that if we have an NA in one
+of our columns the function we made removes this value when calculating
+the mean and standard deviation. However, if the a column of all NA
+values is entered, then the mean and standard deviation for this column
+is also NA. However, no error is returned as the function still returns
+the mean and standard deviations of other numeric columns inputted.</p>
+</div>
 
 
 
