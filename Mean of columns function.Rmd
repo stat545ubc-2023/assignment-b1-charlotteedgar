@@ -2,7 +2,7 @@
 title: "Assignment B-1"
 author: "Charlotte Edgar"
 date: "2023-10-24"
-output: pdf_document
+output: html_document
 Roxygen: list(markdown = TRUE)
 ---
 ```{r}
@@ -12,11 +12,12 @@ library(testthat)
 ## Function 
 
 In this assignment we will make a function to find the mean and standard deviation of multiple columns of a dataset at once and print them in a table. This function can be used in an exploratory data analysis and can save time by looking at all numeric columns of a dataset at once instead of individually.
+
+The argument is named your_data since data is a function in the utils R package to find preexisting datasets.
 ```{r}
 #' @title Mean and standard deviations of columns.
 #' @details This function takes the mean and standard deviation of each numeric column in a dataset.
 #' @param your_data the dataset containing only numeric columns.
-#' The argument is named your_data since data is a function in the utils R package to find preexisting datasets.
 #' @return returns a data frame with column means and std. deviations.
 
 mean_sd_of_cols <- function(your_data){
