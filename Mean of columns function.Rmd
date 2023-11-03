@@ -9,6 +9,8 @@ Roxygen: list(markdown = TRUE)
 library(testthat)
 ```
 
+## Function 
+
 In this assignment we will make a function to find the mean and standard deviation of multiple columns of a dataset at once and print them in a table. This function can be used in an exploratory data analysis and can save time by looking at all numeric columns of a dataset at once instead of individually.
 ```{r}
 #' @title Mean of columns
